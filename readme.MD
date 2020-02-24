@@ -26,7 +26,7 @@ When presented with a new observation of live trading data, each of these agents
 
 ## High-level data pipeline
 
-Loosely sketched:
+The pipeline is designed as loosely sketched here:
 
 1: live data observation --> `s3` --> 2: clean + parse --> `RDBMS` --> 3: feature derivation --> `HDF5` --> 4: refine model and potentially invest or divest
 
