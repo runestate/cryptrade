@@ -1,0 +1,105 @@
+{  
+    "version": 1,
+    "formatters": {
+        "custom": { 
+        	"format": "%(asctime)s %(levelname)s %(message)s",
+        	"datefmt": "%Y-%m-%d %H:%M:%S" 
+        	}
+        },
+    "handlers": {
+        "stdout":{
+            "class": "logging.StreamHandler",
+            "stream": "python:sys.stdout",
+            "formatter": "custom"
+        },
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "custom",
+			"filename": "python:~/log/cryptrade.log",
+			"maxBytes": 10240000,
+			"backupCount": 25
+		},
+        "file_info": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "custom",
+			"filename": "python:~/log/cryptrade.info.log",
+			"maxBytes": 10240000,
+			"backupCount": 25,
+	        "level": "python:logging.INFO"
+		},
+        "file_warn": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "custom",
+			"filename": "python:~/log/cryptrade.warn.log",
+			"maxBytes": 10240000,
+			"backupCount": 25,
+	        "level": "python:logging.WARN"
+		},
+        "file_error": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "custom",
+			"filename": "python:~/log/cryptrade.error.log",
+			"maxBytes": 10240000,
+			"backupCount": 25,
+	        "level": "python:logging.ERROR"
+		},
+        "file_critical": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "custom",
+			"filename": "python:~/log/cryptrade.critical.log",
+			"maxBytes": 10240000,
+			"backupCount": 25,
+	        "level": "python:logging.CRITICAL"
+		},
+        "plot_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "custom",
+			"filename": "python:~/log/plot.cryptrade.log",
+			"maxBytes": 10240000,
+			"backupCount": 25
+		},
+        "plot_file_info": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "custom",
+			"filename": "python:~/log/plot.cryptrade.info.log",
+			"maxBytes": 10240000,
+			"backupCount": 25,
+	        "level": "python:logging.INFO"
+		},
+        "plot_file_warn": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "custom",
+			"filename": "python:~/log/plot.cryptrade.warn.log",
+			"maxBytes": 10240000,
+			"backupCount": 25,
+	        "level": "python:logging.WARN"
+		},
+        "plot_file_error": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "custom",
+			"filename": "python:~/log/plot.cryptrade.error.log",
+			"maxBytes": 10240000,
+			"backupCount": 25,
+	        "level": "python:logging.ERROR"
+		},
+        "plot_file_critical": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "custom",
+			"filename": "python:~/log/plot.cryptrade.critical.log",
+			"maxBytes": 10240000,
+			"backupCount": 25,
+	        "level": "python:logging.CRITICAL"
+		}
+    },
+    "loggers": {
+        "default": {
+            "handlers": [
+            	"stdout", 
+            	"file", "file_info", "file_warn", "file_error", "file_critical",
+            	"plot_file", "plot_file_info", "plot_file_warn", "plot_file_error", "plot_file_critical"
+            ],
+            "level": "python:logging.DEBUG",
+            "propagate": "true"
+        	}
+    	}		
+}

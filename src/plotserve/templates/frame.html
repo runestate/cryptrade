@@ -1,0 +1,310 @@
+{% extends "index.html" %}
+{% block content %}
+	<style>
+		.frame-info:hover .frame-info-content {
+			display: block;
+		}
+		.frame-info-content {
+			display: none;
+			position: absolute;
+			background: black !important;
+			color: white;
+			z-index: 100;
+			padding: 10px 15px;
+		}
+		.point-tooltip {
+			background: rgba(0,0,0, 0.8);
+			border-radius: 5px;
+			padding: 1px 4px;
+			font-size: 24px
+			opacity: 0.8;
+		}
+		.point-tooltip-key {
+			font-size: 16px;
+			opacity: .85;
+			
+		}
+		#plot{
+			position: absolute;
+			top: 120px;
+			
+			height: calc(100vh - 120px);
+			
+			overflow-x: hidden
+		}
+		.skod {
+			font-size: 30px;
+			background-color: green;
+		}
+		button {
+			border-radius: 5px; 
+			font-size: 13px;
+			padding: 3px 6px; 
+			background: navy; 
+			color: white; 
+			margin: 3px 5px; 
+			align-items: center; 
+			justify-content: center; 
+			flex-wrap: wrap;
+			
+			transition: transform .1s;
+		}
+		button:hover {
+			opacity: 1;
+			transform: scale(1.05);
+		}
+		button:active {
+			background: white; 
+			color: navy; 		
+		}
+		.manipulators {
+			
+		}
+		.skip-buttons * {
+			flex: 1;
+		}
+		.myrow > * {
+			margin-right: 15px;
+		}
+		.slidecontainer {
+			flex: 1;
+		}
+		.slidecontainer > * {
+			margin: 10px;
+		}
+	</style>
+	<div id="loading">
+	</div>
+	<div id="duration-notify">
+	</div>
+	<div id='plot'>{{plothtml | safe }}</div>
+	<form>
+		<div class="manipulators">
+				<div class="frame-info">
+			      <div class="btn btn-primary" onclick="location.href = '/'">
+			        {{'←'}}
+			      </div>
+			      <div class="frame-info-content">
+			      		{{ frame_info_html | safe }}
+			      </div>
+		  		</div>
+				<div class="frame-info-ext">
+			      <a target="_blank" class="btn btn-primary" href="/frame-info/{{filename}}">
+			        &#9432;
+			      </a>
+		  		</div>
+		  		<div>
+			    	<div onclick="assignRange(); return false" class="btn btn-primary"  >
+			      		Assign range
+		     		</div>
+				</div>
+		  		<div>
+		  			<script>
+		  				function passthroughOnly() {
+		  					$(':input[name=agents]').prop('checked', false);
+		  					$(':input[value^=pastrg]').prop('checked', true);
+		  					updatePlot()
+		  				}
+		  			</script>
+			    	<div onclick="passthroughOnly(); return false" class="btn btn-primary"  >
+			      		Pastrg
+		     		</div>
+				</div>
+					<div class="skip-buttons btn-group" >
+	
+					{% for key, values in agent_map %}
+						<div class="dropdown">
+						  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						    {{ key }}
+						  </button>
+						  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="background: rgba(0,0,0,.7); padding: 10px 5px">
+							{% for agent in values %}
+				    	<label class="btn btn-primary ">
+			    			<input type="checkbox" name="agents" value="{{ agent }}"  >{{ agent }}
+			      		</label>
+							{% endfor %}
+						  </div>
+						</div>
+					{% endfor %}
+					</div>
+					<div class="skip-buttons btn-group btn-group-toggle" data-toggle="buttons">
+				      <label class="btn btn-primary ">
+				        <input type="radio" name="skips" value="1"  >1st
+				      </label>
+				      <label class="btn btn-primary" >
+				        <input type="radio" name="skips" value="10">10th
+				      </label>
+				      <label class="btn btn-primary active" >
+				        <input type="radio" name="skips" value="50" checked="">50th
+				      </label>
+				      <label class="btn btn-primary" >
+				        <input type="radio" name="skips" value="100">100th
+				      </label>
+					</div>	
+			<div class="skip-buttons btn-group btn-group-toggle" data-toggle="buttons">
+		      <label class="btn btn-primary active">
+		        <input type="radio" name="format" value="0" checked="">D3
+		      </label>
+		      <label class="btn btn-primary" >
+		        <input type="radio" name="format" value="1">IMG
+		      </label>
+			</div>	
+	
+		      <div class="btn btn-primary" onclick="updatePlot()">
+		        &#8635;
+		      </div>
+		</div>
+				
+		<div style="display: flex">
+			<div id="fromTimeSliderVal" class="slider-value"></div>
+			
+	
+	</div>
+	<script>
+		fromTimeSlider = $('#fromTimeSlider')[0]
+		toTimeSlider = $('#toTimeSlider')[0]
+		function toggleLoading() {
+			$('#loading').toggle();
+		}
+		function getplot(url) {
+			console.log('getting plot: ' + url);
+			var opts = {
+					method: 'GET',
+				};
+			toggleLoading();
+			fetch(url, opts).then( function (response) {
+					return response.text()
+				}).then( function(html) {
+						console.log('updating plot')
+						$('#plot').html(html)// document.getElementById('plot').innerHTML = html
+						toggleLoading();
+						emulateZoomClick();
+					}).catch( function(reason) { 
+							console.error(reason)
+						});
+			}
+		function hookupSliderVal(slideId, valueId) {
+			var slider = document.getElementById(slideId);
+			var output = document.getElementById(valueId);
+			function formatEpoch(epoch) {
+				return new Date(+epoch * 1000).toISOString().slice(0,19).replace('T', ' ');
+			}
+			function update(el, value) {
+			    el.innerHTML = formatEpoch(+value) + ' (' + value + ')';
+			}
+			update(output, slider.value);
+			const slideChange = Rx.Observable.merge ( 
+				Rx.Observable.fromEvent(slider, 'input'),
+				Rx.Observable.fromEvent(slider, 'change'),
+				).map( 
+				function() { return slider.value }  
+				).startWith(slider.value);
+			
+			slideChange.subscribe(function() {
+					update(output, slider.value);
+				});
+			return slideChange;
+		}
+		const slidersChange = Rx.Observable.combineLatest(
+			hookupSliderVal('fromTimeSlider', 'fromTimeSliderVal'),
+			hookupSliderVal('toTimeSlider', 'toTimeSliderVal'),
+			).skip(1);
+		slidersChange.subscribe( function(arr) {
+				el = $('#duration-notify, #duration-label');
+				el.html((arr[1] - arr[0]) / (3600*24) );
+				el.show();
+		})
+		slidersChange.debounceTime(1000).subscribe(
+			function() { $('#duration-notify').hide() }
+			)
+		//
+		function emulateClick(className) {
+			setTimeout(
+				function() { 
+					linkEl = $(className)[0]
+					if (!linkEl)
+						return;
+					if (linkEl.dispatchEvent) {
+					        var e = document.createEvent("MouseEvents");
+					        e.initEvent("click", true, true);
+					        linkEl.dispatchEvent(e);
+					    } else {
+					        linkEl.click();
+					    }
+				}, 400
+				)
+		}
+		function emulateZoomClick() {
+			console.log('zoom mode!')
+			emulateClick('.mpld3-zoombutton')
+		}
+		function emulateBoxZoomClick() {
+			console.log('BOX zoom mode!')
+			emulateClick('.mpld3-boxzoombutton')
+		}
+		zoomKeyCode = 16
+		window.onkeydown = function(e) {
+			var key = e.keyCode ? e.keyCode : e.which;
+			if (key == zoomKeyCode) 
+				emulateBoxZoomClick();
+		}
+		window.onkeyup = function(e) {
+			var key = e.keyCode ? e.keyCode : e.which;
+			if (key == zoomKeyCode) 
+				emulateZoomClick();
+		}
+		emulateZoomClick();
+		toggleLoading();
+		function assignRange() {
+			if (!mpld3)
+				return
+			dims = mpld3.getPlotZoomWindow()
+			start_epoch = new Date(dims.x_min).getTime() /1000 | 0;
+			end_epoch = new Date(dims.x_max).getTime() /1000 | 0;
+			$(fromTimeSlider).val(start_epoch);
+			$(toTimeSlider).val(end_epoch);
+		}
+		function updatePlot(is_not_to_request) {
+		        fromEpoch = $('#fromTimeSlider')[0]['value']
+		        toEpoch = $('#toTimeSlider')[0]['value']
+		   		var checked = $(':input[name=skips]:checked')
+		   		filterOnlyNth = checked[0]['value']
+				agentsToken = $(':input[name=agents]:checked').map( 
+		   			function() { return this.value }
+		   			).get()
+  					.join();
+		   		var formatAsImage = $(':input[name=format]:checked')[0]['value']
+				paramsToken = '{{filename}}/' + fromEpoch + '/' + toEpoch + '/' + filterOnlyNth + '/' + (agentsToken == ''? ',' : agentsToken) + `/${formatAsImage}`;
+				window.history.pushState("", "",  '/frame/html/'  + paramsToken);
+				
+				if (is_not_to_request !== true)
+					getplot('/frame/plot_only/' + paramsToken);
+		}
+		function getstate() {
+		}
+		function radioFix(name) {
+		   		var checked = $(':input[name=' + name + ']:checked')
+		   		checked.parent('.btn').addClass('active');
+		   		$(':input[name=' + name + ']').not(':checked').parent('.btn').removeClass('active');
+		}
+		var somethingChanged = false;
+		$(document).ready(function() { 
+		   $('input').change(function() { 
+		   		radioFix('skips');
+		   		radioFix('agents');
+		   		radioFix('format');
+		        updatePlot();
+		   }); 
+		});
+		const plotEl = document.getElementById('plot')
+		 Rx.Observable.merge(
+		 	Rx.Observable.fromEvent(plotEl, 'mousemove'),
+		 	Rx.Observable.fromEvent(plotEl, 'scroll')
+		 	).debounceTime(100).subscribe( function() {
+				if (!mpld3)
+					return;
+				assignRange();
+				updatePlot(true)
+			});
+	</script>
+{% endblock %}

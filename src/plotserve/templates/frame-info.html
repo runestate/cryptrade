@@ -1,0 +1,31 @@
+{% extends "index.html" %}
+{% block content %}
+	<style>
+		.info {
+			
+			margin: 4px 6px;
+		}
+	</style>
+	
+	<script>
+		function getplot(url) {
+			window.location.href = url;
+		}
+	</script>
+	
+	<div style="padding: 50px 100px">
+		<h2>Frame info</h2>
+		<div class="info">
+		{% for key, value in frame_info_map.items() %}			
+			<h3>{{ key }}</h3>
+			{% for key2, value2 in value.items() %}			
+				<p>
+					<h4>{{ key2 }}</h4>
+					{{ value2 | safe }}
+				</p>
+			{% endfor %}
+		{% endfor %}
+		</div>
+	</div>
+	
+{% endblock %}

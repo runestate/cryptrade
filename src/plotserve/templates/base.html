@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <title>Plotserve</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		  <script src="https://npmcdn.com/@reactivex/rxjs@5.0.0-beta.3/dist/global/Rx.umd.js"></script>
+		  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>    
+    </head>
+	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+   	<style>
+   		body {
+   			margin: 0;
+   			padding: 0;
+   			background: {{style.backgroundColor}};
+   			color: {{style.color}};
+   			font-family: Lato;
+   		}
+   		.mpld3-yaxis text, .mpld3-xaxis text {
+   			fill: {{style.color}} !important;
+   		}
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 15px;
+    border-radius: 5px;   
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%; 
+    background: {{style.backgroundColor}};
+    cursor: pointer;
+    border: solid 2px {{style.color}};
+}
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: {{style.color}};
+    cursor: pointer;
+}
+.slidecontainer {
+    width: 100%; 
+}
+.slider:hover {
+    opacity: 1; 
+}
+   </style>
+    <body>
+        {% block content %}{% endblock %}
+    </body>
+</html>

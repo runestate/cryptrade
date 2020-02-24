@@ -1,0 +1,30 @@
+{% extends "index.html" %}
+{% block content %}
+	<style>
+		.file {
+			
+			margin: 4px 6px;
+		}
+	</style>
+	
+	<script>
+		function getplot(url) {
+			window.location.href = url;
+		}
+	</script>
+	
+	<div style="padding: 50px 100px">
+		<h2>Generator Files</h2>
+		<div class="files">
+		 {% for file in files %}
+			<div class="btn btn-primary file" onclick="getplot('{{url_for( 'frame', filename=file.name )}}')">
+				<span>
+					{{ file.name }}
+				</span> 
+				({{ '{:.2f}'.format( file.stat().st_size/1000000.0 ) }}mb)
+			</div>
+		{% endfor %}
+		</div>
+	</div>
+	
+{% endblock %}
