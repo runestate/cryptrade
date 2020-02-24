@@ -7,7 +7,7 @@ This solution is based on python and bash for execution in EC2,   Tensorflow/AWS
 
 
 ## Motivation
-Technical analysis is an old discipline, but has recently become an attractive tool for predicting short-term swing trades as real-time price and volume data have become broadly available. From this data indicators can be extracted, such as whether to buy or sell, if the current trend is up or down and whether or not these trends are strong. Training a powerful deep neural network on this data is now possible with cloud-based services.
+Technical analysis is an old discipline, but has recently become an attractive tool for predicting short-term swing trades as real-time price and volume data have become broadly available. From this, indicators can be extracted, such as whether to buy or sell, if the current trend is up or down and whether or not these trends are strong. Training a powerful deep neural network on this data is now possible with cloud-based services.
 
 
 ## Feature agents
