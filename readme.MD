@@ -45,9 +45,9 @@ The system comprises of the following modules to achieve automation and inspecti
 * fetch: a process that continuously retrieves and persists (raw) live trading data
 * s3push: a process that continuously archives raw data to s3
 * parse: a process that parses new raw trading data whenever such is detected
-* generator: a process that generate feature values whenever a new data observation is detected
+* generator: a process that generate feature values whenever a new (parsed/cleaned) data observation is detected
 * predict: a process that produces investment advice whenever a new set of feature values is detected
 * watch: a process that monitors for stale data and log errors
 * alert: a process that monitors key sources of information on the future of trading commodities (e.g. regulatory branches of the federal government)
-* plotserve: a graph-based UI for inspecting the incoming data and behavior of feature agents derived thereof
+* plotserve: a graph-based UI for inspecting the incoming data and the behavior of the feature agents derived thereof
 
