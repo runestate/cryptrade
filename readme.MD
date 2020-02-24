@@ -14,7 +14,7 @@ Technical analysis is an old discipline, but has recently become an attractive t
 The system uses the following well-known concepts as feature agents:
 
 * moving average crossover
-* candlestick
+* candlestick patterns
 * stochastic oscillator
 * adx
 * volume
